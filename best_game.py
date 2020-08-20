@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
 
-win = pygame.display.set_mode((852, 480))
+win = pygame.display.set_mode((500, 480))
 
 pygame.display.set_caption("my best game")
 
@@ -38,6 +38,8 @@ left = False
 right = False
 walkcount = 0
 
+clock = pygame.time.Clock()
+
 x = 50
 y = 425
 width = 64
@@ -51,14 +53,25 @@ def redrawGameWindow ():
   if walkcount + 1 >= 27:
       walkcount = 0
 
- # if left:
-
+  if left:
+      print("walk count ", walkcount)
+      print("walk count floor div", walkcount//3)
+      win.blit(walkleft[walkcount//3], (x,y))
+      walkcount += 1
+  elif right:
+      print("walk count ", walkcount)
+      print("walk count floor div", walkcount//3)
+      win.blit(walkright[walkcount//3], (x,y))
+      walkcount += 1
+  else:
+      win.blit(char, (x,y))
+      walkcount = 0
 
   pygame.display.update()
 
 run = True
-while run:
-    pygame.time.delay(100)
+while run == True:
+    clock.tick(27)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -70,10 +83,13 @@ while run:
         x -= vel
         left = True
         right = False
-    if keys[pygame.K_RIGHT] and x < screenWidth - width - vel:
+    elif keys[pygame.K_RIGHT] and x < screenWidth - width - vel:
         x += vel
         right = True
         left = False
+    else:
+        left = False
+        right = False
         walkcount = 0
 
     if not(isjump):
@@ -84,14 +100,15 @@ while run:
             neg = 1
             if jumpcount < 0:
                 neg = -1
-            y -= (jumpcount ** 2) * 0.5 * neg
+            #y -= (jumpcount ** 2) * 0.5 * neg
+            y -= jumpcount + 1 * neg
             jumpcount -= 1
 
         else:
             isjump = False
             jumpcount = 10
 
-    redrawGameWindow ()
+    redrawGameWindow()
 
 (jumpcount ** 2) * 0.5 * neg
 pygame.quit()
