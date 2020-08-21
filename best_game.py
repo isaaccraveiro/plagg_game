@@ -6,70 +6,72 @@ win = pygame.display.set_mode((500, 480))
 pygame.display.set_caption("my best game")
 
 walkright = [
-    pygame.image.load('R1.png'),
-    pygame.image.load('R2.png'),
-    pygame.image.load('R3.png'),
-    pygame.image.load('R4.png'),
-    pygame.image.load('R5.png'),
-    pygame.image.load('R6.png'),
-    pygame.image.load('R7.png'),
-    pygame.image.load('R8.png'),
-    pygame.image.load('R9.png'),
+    pygame.image.load('plagg_walk_right1.png'),
+    pygame.image.load('plagg_walk_right2.png'),
+    pygame.image.load('plagg_walk_right3.png'),
+    pygame.image.load('plagg_walk_right1.png'),
+    pygame.image.load('plagg_walk_right2.png'),
+    pygame.image.load('plagg_walk_right3.png'),
+    pygame.image.load('plagg_walk_right1.png'),
+    pygame.image.load('plagg_walk_right2.png'),
+    pygame.image.load('plagg_walk_right3.png')
 ]
 
 walkleft = [
-    pygame.image.load('L1.png'),
-    pygame.image.load('L2.png'),
-    pygame.image.load('L3.png'),
-    pygame.image.load('L4.png'),
-    pygame.image.load('L5.png'),
-    pygame.image.load('L6.png'),
-    pygame.image.load('L7.png'),
-    pygame.image.load('L8.png'),
-    pygame.image.load('L9.png'),
+    pygame.image.load('plagg_walk_left1.png'),
+    pygame.image.load('plagg_walk_left2.png'),
+    pygame.image.load('plagg_walk_left3.png'),
+    pygame.image.load('plagg_walk_left1.png'),
+    pygame.image.load('plagg_walk_left2.png'),
+    pygame.image.load('plagg_walk_left3.png'),
+    pygame.image.load('plagg_walk_left1.png'),
+    pygame.image.load('plagg_walk_left2.png'),
+    pygame.image.load('plagg_walk_left3.png')
 ]
-bg = pygame.image.load('bg.jpg')
-char =  pygame.image.load('standing.png')
-
-isjump = False
-jumpcount = 10
+bg = pygame.image.load('cheese.png')
+char =  pygame.image.load('plagg_standing.png')
 screenWidth = 500
-left = False
-right = False
-walkcount = 0
 
 clock = pygame.time.Clock()
 
-x = 50
-y = 425
-width = 64
-height = 64
-vel = 5
+class player(object):
+    def __init__(self, x, y, width, height):
+      self.x = x
+      self.y = y
+      self.width = width
+      self.height = height
+      self.vel = 5
+      self.isjump = False
+      self.jumpcount = 10
+      self.left = False
+      self.right = False
+      self.walkcount = 0
+
 
 def redrawGameWindow ():
-  global walkcount
   win.blit(bg, (0,0))
 
-  if walkcount + 1 >= 27:
-      walkcount = 0
+  if plagg.walkcount + 1 >= 27:
+      plagg.walkcount = 0
 
-  if left:
-      print("walk count ", walkcount)
-      print("walk count floor div", walkcount//3)
-      win.blit(walkleft[walkcount//3], (x,y))
-      walkcount += 1
-  elif right:
-      print("walk count ", walkcount)
-      print("walk count floor div", walkcount//3)
-      win.blit(walkright[walkcount//3], (x,y))
-      walkcount += 1
+  if plagg.left:
+      #print("walk count ", plagg.walkcount)
+      #print("walk count floor div", plagg.walkcount//3)
+      win.blit(walkleft[plagg.walkcount//3], (plagg.x,plagg.y))
+      plagg.walkcount += 1
+  elif plagg.right:
+      #print("walk count ", plagg.walkcount)
+      #print("walk count floor div", plagg.walkcount//3)
+      win.blit(walkright[plagg.walkcount//3], (plagg.x,plagg.y))
+      plagg.walkcount += 1
   else:
-      win.blit(char, (x,y))
-      walkcount = 0
+      win.blit(char, (plagg.x,plagg.y))
+      plagg.walkcount = 0
 
   pygame.display.update()
 
 run = True
+plagg = player(300, 410, 64, 64)
 while run == True:
     clock.tick(27)
 
@@ -79,36 +81,35 @@ while run == True:
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_LEFT] and x > vel:
-        x -= vel
-        left = True
-        right = False
-    elif keys[pygame.K_RIGHT] and x < screenWidth - width - vel:
-        x += vel
-        right = True
-        left = False
+    if keys[pygame.K_LEFT] and plagg.x > plagg.vel:
+        plagg.x -= plagg.vel
+        plagg.left = True
+        plagg.right = False
+    elif keys[pygame.K_RIGHT] and plagg.x < screenWidth - plagg.width - plagg.vel:
+        plagg.x += plagg.vel
+        plagg.right = True
+        plagg.left = False
     else:
-        left = False
-        right = False
-        walkcount = 0
+        plagg.left = False
+        plagg.right = False
+        plagg.walkcount = 0
 
-    if not(isjump):
+    if not(plagg.isjump):
         if keys[pygame.K_SPACE]:
-            isjump = True
+            plagg.isjump = True
     else:
-        if jumpcount >= -10:
+        if plagg.jumpcount >= -10:
             neg = 1
-            if jumpcount < 0:
+            if plagg.jumpcount < 0:
                 neg = -1
-            #y -= (jumpcount ** 2) * 0.5 * neg
-            y -= jumpcount + 1 * neg
-            jumpcount -= 1
+            plagg.y -= (plagg.jumpcount ** 2) * 0.5 * neg
+            # y -= jumpcount + 1 * neg
+            plagg.jumpcount -= 1
 
         else:
-            isjump = False
-            jumpcount = 10
+            plagg.isjump = False
+            plagg.jumpcount = 10
 
     redrawGameWindow()
 
-(jumpcount ** 2) * 0.5 * neg
 pygame.quit()
