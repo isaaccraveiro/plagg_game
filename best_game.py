@@ -106,25 +106,49 @@ class enemy(object):
         pygame.image.load('L11E.png'),
     ]
 
-    def __init__(x, y, width, height, end):
-      self. x = x
-      self.y = y
-      self.width = width
-      self.height = height
-      self.end = end
-      self.walkcount = 0
-      self.vel = 3
+    def __init__(self, x, y, width, height, end):
+        self. x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.end = end
+        self.path = [self.x, self.y]
+        self.walkcount = 0
+        self.vel = 3
 
     def draw(self, win):
-      pass
+        self.move()
+        if self.walkcount + 1 >= 33:
+            self.walkcount = 0
+
+        if self.vel > 0:
+            win.blit(self.walkright[self.walkcount //3], (self.x, self.y))
+            self.walkcount += 1
+        else:
+            win.blit(self.walkleft[self.walkcount //3], (self.x, self.y))
+            self.walkcount += 1
 
     def move(self):
-      pass
+      if self.vel > 0:
+          if self.x + self.vel < self.path[1]:
+              self.x += self.vel
+          else:
+              self.vel = self.vel * -1
+              self.walkcount = 0
+      else:
+          if self.x - self.vel > self.path[0]:
+              self.x += self.vel
+          else:
+              self.vel = self.vel * -1
+              self.walkcount = 0
+
+
 
 
 def redrawGameWindow ():
   win.blit(bg, (0,0))
   plagg.draw(win)
+  goblin.draw(win)
   #plagg.walkcount = 0
   for bullet in bullets:
       bullet.draw(win)
@@ -133,6 +157,7 @@ def redrawGameWindow ():
 
 run = True
 plagg = player(300, 410, 64, 64)
+goblin = enemy(200, 410, 64, 64, 500)
 bullets = []
 while run == True:
     clock.tick(27)
