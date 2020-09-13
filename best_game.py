@@ -1,40 +1,30 @@
 import pygame
-pygame.init()
-
-win = pygame.display.set_mode((500, 480))
-
-pygame.display.set_caption("my best game")
-
-walkright = [
-    pygame.image.load('plagg_walk_right1.png'),
-    pygame.image.load('plagg_walk_right2.png'),
-    pygame.image.load('plagg_walk_right3.png'),
-    pygame.image.load('plagg_walk_right1.png'),
-    pygame.image.load('plagg_walk_right2.png'),
-    pygame.image.load('plagg_walk_right3.png'),
-    pygame.image.load('plagg_walk_right1.png'),
-    pygame.image.load('plagg_walk_right2.png'),
-    pygame.image.load('plagg_walk_right3.png')
-]
-
-walkleft = [
-    pygame.image.load('plagg_walk_left1.png'),
-    pygame.image.load('plagg_walk_left2.png'),
-    pygame.image.load('plagg_walk_left3.png'),
-    pygame.image.load('plagg_walk_left1.png'),
-    pygame.image.load('plagg_walk_left2.png'),
-    pygame.image.load('plagg_walk_left3.png'),
-    pygame.image.load('plagg_walk_left1.png'),
-    pygame.image.load('plagg_walk_left2.png'),
-    pygame.image.load('plagg_walk_left3.png')
-]
-bg = pygame.image.load('cheese.png')
-char =  pygame.image.load('plagg_standing.png')
-screenWidth = 500
-
-clock = pygame.time.Clock()
 
 class player(object):
+    walkright = [
+        pygame.image.load('plagg_walk_right1.png'),
+        pygame.image.load('plagg_walk_right2.png'),
+        pygame.image.load('plagg_walk_right3.png'),
+        pygame.image.load('plagg_walk_right1.png'),
+        pygame.image.load('plagg_walk_right2.png'),
+        pygame.image.load('plagg_walk_right3.png'),
+        pygame.image.load('plagg_walk_right1.png'),
+        pygame.image.load('plagg_walk_right2.png'),
+        pygame.image.load('plagg_walk_right3.png')
+    ]
+
+    walkleft = [
+        pygame.image.load('plagg_walk_left1.png'),
+        pygame.image.load('plagg_walk_left2.png'),
+        pygame.image.load('plagg_walk_left3.png'),
+        pygame.image.load('plagg_walk_left1.png'),
+        pygame.image.load('plagg_walk_left2.png'),
+        pygame.image.load('plagg_walk_left3.png'),
+        pygame.image.load('plagg_walk_left1.png'),
+        pygame.image.load('plagg_walk_left2.png'),
+        pygame.image.load('plagg_walk_left3.png')
+    ]
+
     def __init__(self, x, y, width, height):
       self.x = x
       self.y = y
@@ -47,24 +37,26 @@ class player(object):
       self.right = False
       self.walkcount = 0
       self.standing = True
+      self.hitbox = (self.x + 14, self.y, 37, 49)
 
-    def draw(self,win):
+    def draw(self, win):
         if self.walkcount + 1 >= 27:
             self.walkcount = 0
 
         if not(self.standing):
             if self.left:
-                win.blit(walkleft[self.walkcount//3], (self.x,self.y))
+                win.blit(self.walkleft[self.walkcount//3], (self.x,self.y))
                 self.walkcount += 1
             elif self.right:
-                win.blit(walkright[self.walkcount//3], (self.x,self.y))
+                win.blit(self.walkright[self.walkcount//3], (self.x,self.y))
                 self.walkcount += 1
         else:
             if self.right:
-                win.blit(walkright[0], (self.x, self.y))
+                win.blit(self.walkright[0], (self.x, self.y))
             else:
-                win.blit(walkleft[0], (self.x, self.y))
-
+                win.blit(self.walkleft[0], (self.x, self.y))
+        self.hitbox = (self.x + 14, self.y, 37, 49)
+        pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
 class projectile(object):
     def __init__(self, x, y, radius, colour, facing):
@@ -80,41 +72,42 @@ class projectile(object):
 
 class enemy(object):
     walkright = [
-        pygame.image.load('R1E.png'),
-        pygame.image.load('R2E.png'),
-        pygame.image.load('R3E.png'),
-        pygame.image.load('R4E.png'),
-        pygame.image.load('R5E.png'),
-        pygame.image.load('R6E.png'),
-        pygame.image.load('R7E.png'),
-        pygame.image.load('R8E.png'),
-        pygame.image.load('R9E.png'),
-        pygame.image.load('R10E.png'),
-        pygame.image.load('R11E.png')
+        pygame.image.load('cheese1_R.png'),
+        pygame.image.load('cheese2_R.png'),
+        pygame.image.load('cheese3_R.png'),
+        pygame.image.load('cheese1_R.png'),
+        pygame.image.load('cheese2_R.png'),
+        pygame.image.load('cheese3_R.png'),
+        pygame.image.load('cheese1_R.png'),
+        pygame.image.load('cheese2_R.png'),
+        pygame.image.load('cheese3_R.png'),
+        pygame.image.load('cheese1_R.png'),
+        pygame.image.load('cheese2_R.png')
     ]
     walkleft = [
-        pygame.image.load('L1E.png'),
-        pygame.image.load('L2E.png'),
-        pygame.image.load('L3E.png'),
-        pygame.image.load('L4E.png'),
-        pygame.image.load('L5E.png'),
-        pygame.image.load('L6E.png'),
-        pygame.image.load('L7E.png'),
-        pygame.image.load('L8E.png'),
-        pygame.image.load('L9E.png'),
-        pygame.image.load('L10E.png'),
-        pygame.image.load('L11E.png'),
+        pygame.image.load('cheese1_L.png'),
+        pygame.image.load('cheese2_L.png'),
+        pygame.image.load('cheese3_L.png'),
+        pygame.image.load('cheese1_L.png'),
+        pygame.image.load('cheese2_L.png'),
+        pygame.image.load('cheese3_L.png'),
+        pygame.image.load('cheese1_L.png'),
+        pygame.image.load('cheese2_L.png'),
+        pygame.image.load('cheese3_L.png'),
+        pygame.image.load('cheese1_L.png'),
+        pygame.image.load('cheese2_L.png')
     ]
 
     def __init__(self, x, y, width, height, end):
         self. x = x
-        self.y = y
+        self.y = y - 15
         self.width = width
         self.height = height
         self.end = end
         self.path = [self.x, self.y]
         self.walkcount = 0
         self.vel = 3
+        self.hitbox = (self.x + 17, self.y + 20, 31, 57)
 
     def draw(self, win):
         self.move()
@@ -122,11 +115,14 @@ class enemy(object):
             self.walkcount = 0
 
         if self.vel > 0:
-            win.blit(self.walkright[self.walkcount //3], (self.x, self.y))
+            win.blit(self.walkright[self.walkcount // 3], (self.x, self.y))
             self.walkcount += 1
         else:
-            win.blit(self.walkleft[self.walkcount //3], (self.x, self.y))
+            win.blit(self.walkleft[self.walkcount // 3], (self.x, self.y))
             self.walkcount += 1
+
+        self.hitbox = (self.x + 17, self.y + 20, 31, 57)
+        pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
     def move(self):
       if self.vel > 0:
@@ -141,9 +137,18 @@ class enemy(object):
           else:
               self.vel = self.vel * -1
               self.walkcount = 0
+      def hit(self):
+        print('HIT')
 
-
-
+#
+# Start of the main functions
+#
+pygame.init()
+pygame.display.set_caption("my best game")
+win = pygame.display.set_mode((500, 480))
+bg = pygame.image.load('cheese.png')
+screenWidth = 500
+clock = pygame.time.Clock()
 
 def redrawGameWindow ():
   win.blit(bg, (0,0))
@@ -154,6 +159,8 @@ def redrawGameWindow ():
       bullet.draw(win)
 
   pygame.display.update()
+
+
 
 run = True
 plagg = player(300, 410, 64, 64)
