@@ -33,7 +33,7 @@ class player(object):
       self.vel = 5
       self.isjump = False
       self.jumpcount = 10
-      self.left = False
+      self.left = True
       self.right = False
       self.walkcount = 0
       self.standing = True
@@ -125,23 +125,24 @@ class enemy(object):
         pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
     def move(self):
-      if self.vel > 0:
+       if self.vel > 0:
           if self.x + self.vel < self.path[1]:
               self.x += self.vel
           else:
               self.vel = self.vel * -1
               self.walkcount = 0
-      else:
+       else:
           if self.x - self.vel > self.path[0]:
               self.x += self.vel
           else:
               self.vel = self.vel * -1
               self.walkcount = 0
-      def hit(self):
-        print('HIT')
+
+    def hit(self):
+        print('hit')
 
 #
-# Start of the main functions
+# Global variables
 #
 pygame.init()
 pygame.display.set_caption("my best game")
@@ -149,31 +150,44 @@ win = pygame.display.set_mode((500, 480))
 bg = pygame.image.load('cheese.png')
 screenWidth = 500
 clock = pygame.time.Clock()
+run = True
+plagg = player(300, 410, 64, 64)
+goblin = enemy(200, 410, 64, 64, 500)
+bullets = []
+shootloop = 0
 
+#
+# Start of the main functions
+#
 def redrawGameWindow ():
   win.blit(bg, (0,0))
   plagg.draw(win)
   goblin.draw(win)
-  #plagg.walkcount = 0
   for bullet in bullets:
       bullet.draw(win)
 
   pygame.display.update()
 
 
-
-run = True
-plagg = player(300, 410, 64, 64)
-goblin = enemy(200, 410, 64, 64, 500)
-bullets = []
 while run == True:
     clock.tick(27)
+
+    if shootloop > 0:
+        shootloop += 1
+    if shootloop > 3:
+        shootloop = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
     for bullet in bullets:
+        if bullet.y - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and bullet.y + bullet.radius > goblin.hitbox[1]:
+            if bullet.x + bullet.radius > goblin.hitbox[0] and bullet.x - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]:
+                goblin.hit()
+                bullets.pop(bullets.index(bullet))
+
+
         if bullet.x < 500 and bullet.x > 0:
             bullet.x += bullet.vel
         else:
@@ -181,14 +195,16 @@ while run == True:
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and shootloop == 0:
         if plagg.left:
             facing = -1
         else:
             facing = 1
 
-        if len (bullets) < 5:
+        if len(bullets) < 5:
             bullets.append(projectile(round(plagg.x + plagg.width // 2), round(plagg.y + plagg.height // 2), 6, (0,0,0), facing))
+
+        shootloop = 1
 
     if keys[pygame.K_LEFT] and plagg.x > plagg.vel:
         plagg.x -= plagg.vel
