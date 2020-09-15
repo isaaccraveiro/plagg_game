@@ -56,7 +56,7 @@ class player(object):
             else:
                 win.blit(self.walkleft[0], (self.x, self.y))
         self.hitbox = (self.x + 14, self.y, 37, 49)
-        pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
+       # pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
 class projectile(object):
     def __init__(self, x, y, radius, colour, facing):
@@ -104,41 +104,63 @@ class enemy(object):
         self.width = width
         self.height = height
         self.end = end
-        self.path = [self.x, self.y]
+        self.path = [self.x, self.end]
         self.walkcount = 0
         self.vel = 3
         self.hitbox = (self.x + 17, self.y + 20, 31, 57)
+        self.health = 10
+        self.visible = True
 
     def draw(self, win):
         self.move()
-        if self.walkcount + 1 >= 33:
-            self.walkcount = 0
+        if self.visible:
+            if self.walkcount + 1 >= 33:
+                self.walkcount = 0
 
-        if self.vel > 0:
-            win.blit(self.walkright[self.walkcount // 3], (self.x, self.y))
-            self.walkcount += 1
-        else:
-            win.blit(self.walkleft[self.walkcount // 3], (self.x, self.y))
-            self.walkcount += 1
+            if self.vel > 0:
+                win.blit(self.walkright[self.walkcount // 3], (self.x, self.y))
+                self.walkcount += 1
+            else:
+               win.blit(self.walkleft[self.walkcount // 3], (self.x, self.y))
+               self.walkcount += 1
 
-        self.hitbox = (self.x + 17, self.y + 20, 31, 57)
-        pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
+            print("walkcount ", self.walkcount)
+            pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10))
+            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - (5 * (10 - self.health)), 10))
+
+            self.hitbox = (self.x + 17, self.y + 20, 31, 57)
+            # pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
     def move(self):
-       if self.vel > 0:
-          if self.x + self.vel < self.path[1]:
-              self.x += self.vel
-          else:
-              self.vel = self.vel * -1
-              self.walkcount = 0
+       print("x ", self.x)
+       if self.visible:
+           print("here1")
+           if self.vel > 0:
+               print("here2", self.path[1])
+               if self.x + self.vel < self.path[1]:
+                   print("here3")
+                   self.x += self.vel
+               else:
+                   print("here4")
+                   self.vel = self.vel * -1
+                   self.walkcount = 0
+           else:
+               print("here5")
+               if self.x - self.vel > self.path[0]:
+                   print("here6")
+                   self.x += self.vel
+               else:
+                   print("here6")
+                   self.vel = self.vel * -1
+                   self.walkcount = 0
        else:
-          if self.x - self.vel > self.path[0]:
-              self.x += self.vel
-          else:
-              self.vel = self.vel * -1
-              self.walkcount = 0
+           print("here10")
 
     def hit(self):
+        if self.health > 0:
+            self.health -= 1
+        else:
+            self.visible = False
         print('hit')
 
 #
@@ -151,16 +173,20 @@ bg = pygame.image.load('cheese.png')
 screenWidth = 500
 clock = pygame.time.Clock()
 run = True
+font = pygame.font.SysFont('arial', 30, True)
 plagg = player(300, 410, 64, 64)
-goblin = enemy(200, 410, 64, 64, 500)
+goblin = enemy(200, 410, 64, 64, 460)
 bullets = []
 shootloop = 0
+score = 0
 
 #
 # Start of the main functions
 #
 def redrawGameWindow ():
   win.blit(bg, (0,0))
+  text = font.render('score: ' + str(score), 1, (255, 0, 0))
+  win.blit(text, (360, 10))
   plagg.draw(win)
   goblin.draw(win)
   for bullet in bullets:
@@ -185,8 +211,8 @@ while run == True:
         if bullet.y - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and bullet.y + bullet.radius > goblin.hitbox[1]:
             if bullet.x + bullet.radius > goblin.hitbox[0] and bullet.x - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]:
                 goblin.hit()
+                score += 1
                 bullets.pop(bullets.index(bullet))
-
 
         if bullet.x < 500 and bullet.x > 0:
             bullet.x += bullet.vel
