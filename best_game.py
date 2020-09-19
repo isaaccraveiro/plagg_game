@@ -1,6 +1,9 @@
+"""Isaac's game."""
 import pygame
 
-class player(object):
+
+class Player():
+    """Test"""
     walkright = [
         pygame.image.load('plagg_walk_right1.png'),
         pygame.image.load('plagg_walk_right2.png'),
@@ -26,18 +29,18 @@ class player(object):
     ]
 
     def __init__(self, x, y, width, height):
-      self.x = x
-      self.y = y
-      self.width = width
-      self.height = height
-      self.vel = 5
-      self.isjump = False
-      self.jumpcount = 10
-      self.left = True
-      self.right = False
-      self.walkcount = 0
-      self.standing = True
-      self.hitbox = (self.x + 14, self.y, 37, 49)
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.vel = 5
+        self.isjump = False
+        self.jumpcount = 10
+        self.left = True
+        self.right = False
+        self.walkcount = 0
+        self.standing = True
+        self.hitbox = (self.x + 14, self.y, 37, 49)
 
     def draw(self, win):
         if self.walkcount + 1 >= 27:
@@ -45,10 +48,10 @@ class player(object):
 
         if not(self.standing):
             if self.left:
-                win.blit(self.walkleft[self.walkcount//3], (self.x,self.y))
+                win.blit(self.walkleft[self.walkcount//3], (self.x, self.y))
                 self.walkcount += 1
             elif self.right:
-                win.blit(self.walkright[self.walkcount//3], (self.x,self.y))
+                win.blit(self.walkright[self.walkcount//3], (self.x, self.y))
                 self.walkcount += 1
         else:
             if self.right:
@@ -56,9 +59,10 @@ class player(object):
             else:
                 win.blit(self.walkleft[0], (self.x, self.y))
         self.hitbox = (self.x + 14, self.y, 37, 49)
-       # pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
+        # pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
-class projectile(object):
+
+class Projectile(object):
     def __init__(self, x, y, radius, colour, facing):
         self.x = x
         self.y = y
@@ -67,10 +71,11 @@ class projectile(object):
         self.facing = facing
         self.vel = 8 * facing
 
-    def draw(self,win):
-        pygame.draw.circle(win, self.colour, (self.x,self.y), self.radius)
+    def draw(self, win):
+        pygame.draw.circle(win, self.colour, (self.x, self.y), self.radius)
 
-class enemy(object):
+
+class Enemy(object):
     walkright = [
         pygame.image.load('cheese1_R.png'),
         pygame.image.load('cheese2_R.png'),
@@ -121,40 +126,41 @@ class enemy(object):
                 win.blit(self.walkright[self.walkcount // 3], (self.x, self.y))
                 self.walkcount += 1
             else:
-               win.blit(self.walkleft[self.walkcount // 3], (self.x, self.y))
-               self.walkcount += 1
+                win.blit(self.walkleft[self.walkcount // 3], (self.x, self.y))
+                self.walkcount += 1
 
-            print("walkcount ", self.walkcount)
-            pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10))
-            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - (5 * (10 - self.health)), 10))
+            # print("walkcount ", self.walkcount)
+            pygame.draw.rect(win, (255, 0, 0),
+                             (self.hitbox[0], self.hitbox[1] - 20, 50, 10))
+            pygame.draw.rect(win, (0, 255, 0),
+                             (self.hitbox[0], self.hitbox[1] - 20,
+                              50 - (5 * (10 - self.health)), 10))
 
             self.hitbox = (self.x + 17, self.y + 20, 31, 57)
             # pygame.draw.rect(win, (255, 0, 0), self.hitbox,2)
 
     def move(self):
-       print("x ", self.x)
-       if self.visible:
-           print("here1")
-           if self.vel > 0:
-               print("here2", self.path[1])
-               if self.x + self.vel < self.path[1]:
-                   print("here3")
-                   self.x += self.vel
-               else:
-                   print("here4")
-                   self.vel = self.vel * -1
-                   self.walkcount = 0
-           else:
-               print("here5")
-               if self.x - self.vel > self.path[0]:
-                   print("here6")
-                   self.x += self.vel
-               else:
-                   print("here6")
-                   self.vel = self.vel * -1
-                   self.walkcount = 0
-       else:
-           print("here10")
+        # print("x ", self.x)
+        if self.visible:
+            # print("here1")
+            if self.vel > 0:
+                # print("here2", self.path[1])
+                if self.x + self.vel < self.path[1]:
+                    # print("here3")
+                    self.x += self.vel
+                else:
+                    # print("here4")
+                    self.vel = self.vel * -1
+                    self.walkcount = 0
+            else:
+                # print("here5")
+                if self.x - self.vel > self.path[0]:
+                    # print("here6")
+                    self.x += self.vel
+                else:
+                    # print("here6")
+                    self.vel = self.vel * -1
+                    self.walkcount = 0
 
     def hit(self):
         if self.health > 0:
@@ -162,6 +168,7 @@ class enemy(object):
         else:
             self.visible = False
         print('hit')
+
 
 #
 # Global variables
@@ -171,31 +178,39 @@ pygame.display.set_caption("my best game")
 win = pygame.display.set_mode((500, 480))
 bg = pygame.image.load('cheese.png')
 screenWidth = 500
+
 clock = pygame.time.Clock()
+
 run = True
 font = pygame.font.SysFont('arial', 30, True)
-plagg = player(300, 410, 64, 64)
-goblin = enemy(200, 410, 64, 64, 460)
+plagg = Player(300, 410, 64, 64)
+goblin = Enemy(200, 410, 64, 64, 460)
 bullets = []
 shootloop = 0
 score = 0
 
+bulletsound = pygame.mixer.Sound('bullet.wav')
+hitsound = pygame.mixer.Sound('hit.wav')
+music = pygame.mixer.music.load('music.mp3')
+pygame.mixer.music.play(-1)
+
+
 #
 # Start of the main functions
 #
-def redrawGameWindow ():
-  win.blit(bg, (0,0))
-  text = font.render('score: ' + str(score), 1, (255, 0, 0))
-  win.blit(text, (360, 10))
-  plagg.draw(win)
-  goblin.draw(win)
-  for bullet in bullets:
-      bullet.draw(win)
+def redrawGameWindow():
+    win.blit(bg, (0, 0))
+    text = font.render('score: ' + str(score), 1, (255, 0, 0))
+    win.blit(text, (360, 10))
+    plagg.draw(win)
+    goblin.draw(win)
+    for bullet in bullets:
+        bullet.draw(win)
 
-  pygame.display.update()
+    pygame.display.update()
 
 
-while run == True:
+while run:
     clock.tick(27)
 
     if shootloop > 0:
@@ -208,8 +223,11 @@ while run == True:
             run = False
 
     for bullet in bullets:
-        if bullet.y - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and bullet.y + bullet.radius > goblin.hitbox[1]:
-            if bullet.x + bullet.radius > goblin.hitbox[0] and bullet.x - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]:
+        if ((bullet.y - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3]) and
+            (bullet.y + bullet.radius > goblin.hitbox[1])):
+            if ((bullet.x + bullet.radius > goblin.hitbox[0]) and
+                (bullet.x - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2])):
+                hitsound.play()
                 goblin.hit()
                 score += 1
                 bullets.pop(bullets.index(bullet))
@@ -222,13 +240,16 @@ while run == True:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_SPACE] and shootloop == 0:
+        bulletsound.play()
         if plagg.left:
             facing = -1
         else:
             facing = 1
 
         if len(bullets) < 5:
-            bullets.append(projectile(round(plagg.x + plagg.width // 2), round(plagg.y + plagg.height // 2), 6, (0,0,0), facing))
+            bullets.append(Projectile(round(plagg.x + plagg.width // 2),
+                                      round(plagg.y + plagg.height // 2),
+                                      6, (0,0,0), facing))
 
         shootloop = 1
 
@@ -237,7 +258,8 @@ while run == True:
         plagg.left = True
         plagg.right = False
         plagg.standing = False
-    elif keys[pygame.K_RIGHT] and plagg.x < screenWidth - plagg.width - plagg.vel:
+    elif ((keys[pygame.K_RIGHT]) and
+          (plagg.x < screenWidth - plagg.width - plagg.vel)):
         plagg.x += plagg.vel
         plagg.right = True
         plagg.left = False
